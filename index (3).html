@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>Study With Ben</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Study With Ben">
+<meta name="theme-color" content="#090d0b">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23090d0b'/%3E%3Ctext x='50' y='65' font-size='55' text-anchor='middle'%3E%E2%8C%9A%3C/text%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg-0:#090d0b;
+    --panel:#121a16;
+    --panel-2:#0e1512;
+    --line:#1f2b24;
+    --green:#3ef58c;
+    --green-dim:#1f7a49;
+    --text:#eaf3ee;
+    --text-dim:#7c9689;
+    --text-mute:#4f6459;
+    --danger:#ff5c5c;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 50% -10%, #123322 0%, transparent 55%),
+      var(--bg-0);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    min-height:100vh;
+    padding:calc(28px + env(safe-area-inset-top)) 16px calc(60px + env(safe-area-inset-bottom));
+  }
+  .wrap{max-width:640px;margin:0 auto;}
+
+  .brand{text-align:center; margin-bottom:18px;}
+  .brand .eyebrow{
+    font-family:'Courier New',ui-monospace,monospace;
+    font-size:12px;
+    letter-spacing:3px;
+    color:var(--green);
+    text-transform:uppercase;
+  }
+  .brand h1{font-size:28px; margin:6px 0 4px; font-weight:800;}
+  .brand p{color:var(--text-dim); font-size:14px; margin:0;}
+
+  .stats-bar{
+    display:flex;
+    justify-content:center;
+    gap:22px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:10px 14px;
+    margin:18px 0 22px;
+    font-size:13px;
+    color:var(--text-dim);
+  }
+  .stats-bar b{
+    color:var(--green);
+    font-family:'Courier New',ui-monospace,monospace;
+    font-weight:700;
+    margin-left:4px;
+  }
+
+  .section-title{
+    font-size:12px;
+    color:var(--text-mute);
+    letter-spacing:1px;
+    text-transform:uppercase;
+    margin:0 0 12px;
+  }
+
+  /* ---------- Ben version cards ---------- */
+  .ben-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:12px;
+    margin-bottom:26px;
+  }
+  .ben-card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:18px 8px;
+    text-align:center;
+    cursor:pointer;
+    transition:border-color .15s ease, transform .1s ease, background .15s ease;
+  }
+  .ben-card:hover{border-color:var(--green-dim); background:#152019;}
+  .ben-card:active{transform:scale(.97);}
+  .ben-card.selected{border-color:var(--green); background:rgba(62,245,140,.08);}
+  .ben-card .icon{
+    font-size:34px;
+    display:block;
+    margin-bottom:8px;
+    filter:drop-shadow(0 0 8px rgba(62,245,140,.25));
+  }
+  .ben-card .name{font-weight:800; font-size:13px; display:block;}
+  .ben-card .tag{display:block; color:var(--text-dim); font-size:11px; margin-top:4px; line-height:1.4;}
+
+  /* ---------- Custom timer setup ---------- */
+  .custom-section{
+    padding-top:6px;
+  }
+  .custom-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+  }
+  .custom-card{
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:16px;
+    text-align:center;
+  }
+  .custom-card .icon{font-size:26px; display:block; margin-bottom:6px;}
+  .custom-card .name{font-weight:700; font-size:13px; display:block; margin-bottom:2px;}
+  .custom-card .sub{font-size:11px; color:var(--text-dim); display:block; margin-bottom:10px;}
+  .custom-card input[type=number]{
+    width:80px;
+    background:var(--bg-0);
+    border:1px solid var(--line);
+    color:var(--text);
+    font-family:'Courier New',ui-monospace,monospace;
+    font-size:16px;
+    text-align:center;
+    border-radius:8px;
+    padding:6px 4px;
+    margin-bottom:10px;
+  }
+  .custom-card button{
+    display:block;
+    width:100%;
+    background:var(--green);
+    color:#06170e;
+    border:none;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    font-weight:700;
+    font-size:13px;
+    padding:9px;
+    border-radius:20px;
+    cursor:pointer;
+  }
+  .custom-card button:disabled{
+    background:var(--line);
+    color:var(--text-mute);
+    cursor:not-allowed;
+  }
+  .custom-card button:not(:disabled):hover{background:#5bffa4;}
+  .hint{
+    text-align:center;
+    font-size:12px;
+    color:var(--text-mute);
+    margin:14px 0 0;
+  }
+
+  /* ---------- Timer screen ---------- */
+  #timer-screen{display:none; text-align:center;}
+  .back-btn{
+    background:none;
+    border:1px solid var(--line);
+    color:var(--text-dim);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    font-size:13px;
+    padding:7px 14px;
+    border-radius:20px;
+    cursor:pointer;
+    margin-bottom:18px;
+  }
+  .back-btn:hover{border-color:var(--green-dim); color:var(--text);}
+
+  .active-ben .icon{
+    font-size:46px;
+    display:block;
+    filter:drop-shadow(0 0 14px rgba(62,245,140,.4));
+  }
+  .active-ben .name{
+    font-family:'Courier New',ui-monospace,monospace;
+    font-weight:700;
+    font-size:19px;
+    letter-spacing:1px;
+    display:block;
+    margin-top:8px;
+  }
+  .active-ben .tag{color:var(--text-dim); font-size:13px;}
+
+  .dial-wrap{position:relative; width:260px; height:260px; margin:22px auto;}
+  .dial-wrap svg{transform:rotate(-90deg); width:100%; height:100%;}
+  .dial-bg{fill:none; stroke:var(--line); stroke-width:10;}
+  .dial-fg{
+    fill:none;
+    stroke:var(--green);
+    stroke-width:10;
+    stroke-linecap:round;
+    transition:stroke-dashoffset .3s linear;
+  }
+  .dial-fg.running{filter:drop-shadow(0 0 6px rgba(62,245,140,.6));}
+  .dial-fg.pulsing{animation:pulseRing 1.6s ease-in-out infinite;}
+  @keyframes pulseRing{ 0%,100%{opacity:1;} 50%{opacity:.55;} }
+  .dial-center{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+  }
+  .time-display{
+    font-family:'Courier New',ui-monospace,monospace;
+    font-size:44px;
+    font-weight:700;
+    letter-spacing:1px;
+  }
+  .time-status{font-size:12px; color:var(--text-dim); margin-top:6px; letter-spacing:1px;}
+
+  .controls{display:flex; gap:10px; justify-content:center; margin-top:8px; flex-wrap:wrap;}
+  .ctrl-btn{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    font-weight:700;
+    font-size:14px;
+    padding:11px 22px;
+    border-radius:24px;
+    border:1px solid var(--line);
+    background:var(--panel);
+    color:var(--text);
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .ctrl-btn.primary{background:var(--green); color:#06170e; border-color:var(--green);}
+  .ctrl-btn.primary:hover{background:#5bffa4;}
+  .ctrl-btn:not(.primary):hover{border-color:var(--green-dim);}
+
+  .done-msg{
+    display:none;
+    margin-top:18px;
+    background:rgba(62,245,140,.08);
+    border:1px solid var(--green-dim);
+    border-radius:12px;
+    padding:14px;
+    font-size:14px;
+    color:var(--green);
+  }
+
+  .footnote{text-align:center; color:var(--text-mute); font-size:12px; margin-top:34px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brand">
+    <div class="eyebrow">Omnitrix Study Protocol</div>
+    <h1>Study With Ben</h1>
+    <p>Pick which Ben studies with you, then set your own time</p>
+  </div>
+
+  <div class="stats-bar">
+    <div>Sessions today <b id="stat-sessions">0</b></div>
+    <div>Minutes studied <b id="stat-minutes">0</b></div>
+  </div>
+
+  <div id="select-screen">
+    <p class="section-title">Choose your study buddy</p>
+    <div class="ben-grid" id="ben-grid"></div>
+
+    <div class="custom-section">
+      <p class="section-title">Choose your time</p>
+      <div class="custom-grid">
+        <div class="custom-card">
+          <span class="icon">⏳</span>
+          <span class="name">Set your own time</span>
+          <span class="sub">Countdown timer</span>
+          <input type="number" id="custom-mins" value="25" min="1" max="180">
+          <button id="start-custom-btn" disabled onclick="startCustom()">Start session</button>
+        </div>
+        <div class="custom-card">
+          <span class="icon">⏱️</span>
+          <span class="name">Count freely</span>
+          <span class="sub">Stopwatch, no limit</span>
+          <div style="height:38px;"></div>
+          <button id="start-stopwatch-btn" disabled onclick="startStopwatch()">Start counting</button>
+        </div>
+      </div>
+      <p class="hint" id="pick-hint">Pick a Ben above to unlock these</p>
+    </div>
+  </div>
+
+  <div id="timer-screen">
+    <button class="back-btn" onclick="backToSelect()">← Back to choose again</button>
+
+    <div class="active-ben">
+      <span class="icon" id="active-icon"></span>
+      <span class="name" id="active-name"></span>
+      <span class="tag" id="active-tag"></span>
+    </div>
+
+    <div class="dial-wrap">
+      <svg viewBox="0 0 260 260">
+        <circle class="dial-bg" cx="130" cy="130" r="115"></circle>
+        <circle class="dial-fg" id="dial-fg" cx="130" cy="130" r="115"></circle>
+      </svg>
+      <div class="dial-center">
+        <div class="time-display" id="time-display">00:00</div>
+        <div class="time-status" id="time-status">Ready</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="ctrl-btn primary" id="start-btn" onclick="toggleTimer()">Start</button>
+      <button class="ctrl-btn" onclick="resetTimer()">Reset</button>
+      <button class="ctrl-btn" id="finish-btn" onclick="finishSession()" style="display:none;">Finish session</button>
+    </div>
+
+    <div class="done-msg" id="done-msg">Session complete! Take a breather, then start another when you're ready.</div>
+  </div>
+
+  <div class="footnote">A simple study timer, inspired by the world of Ben 10</div>
+</div>
+
+<script>
+const bens = [
+  {icon:"🧑", name:"Classic Ben", tag:"10 years old, brand new Omnitrix"},
+  {icon:"🧑‍🦱", name:"Alien Force Ben", tag:"15, more focused, still reckless"},
+  {icon:"🧑‍🚀", name:"Ultimate Ben", tag:"16, Ultimatrix era"},
+];
+
+let selectedBen = null;
+const benGrid = document.getElementById('ben-grid');
+
+bens.forEach((b, i)=>{
+  const card = document.createElement('div');
+  card.className = 'ben-card';
+  card.innerHTML = `
+    <span class="icon">${b.icon}</span>
+    <span class="name">${b.name}</span>
+    <span class="tag">${b.tag}</span>
+  `;
+  card.onclick = () => pickBen(i, card);
+  benGrid.appendChild(card);
+});
+
+function pickBen(i, cardEl){
+  selectedBen = bens[i];
+  [...benGrid.children].forEach(c => c.classList.remove('selected'));
+  cardEl.classList.add('selected');
+  document.getElementById('start-custom-btn').disabled = false;
+  document.getElementById('start-stopwatch-btn').disabled = false;
+  document.getElementById('pick-hint').style.display = 'none';
+}
+
+let mode = "countdown";
+let totalSeconds = 0;
+let remaining = 0;
+let elapsed = 0;
+let timerInterval = null;
+let running = false;
+
+const STATS_KEY = "ben10_study_timer_stats";
+let sessionsToday = 0;
+let minutesToday = 0;
+
+function todayStr(){
+  return new Date().toISOString().slice(0,10);
+}
+
+function loadStats(){
+  try{
+    const raw = localStorage.getItem(STATS_KEY);
+    if(!raw) return;
+    const data = JSON.parse(raw);
+    if(data.date === todayStr()){
+      sessionsToday = data.sessions || 0;
+      minutesToday = data.minutes || 0;
+    }
+  }catch(e){}
+  document.getElementById('stat-sessions').textContent = sessionsToday;
+  document.getElementById('stat-minutes').textContent = minutesToday;
+}
+
+function saveStats(){
+  try{
+    localStorage.setItem(STATS_KEY, JSON.stringify({date: todayStr(), sessions: sessionsToday, minutes: minutesToday}));
+  }catch(e){}
+}
+
+loadStats();
+
+const R = 115;
+const CIRC = 2 * Math.PI * R;
+const dialFg = document.getElementById('dial-fg');
+dialFg.style.strokeDasharray = CIRC;
+dialFg.style.strokeDashoffset = 0;
+
+function openTimerScreen(){
+  document.getElementById('active-icon').textContent = selectedBen.icon;
+  document.getElementById('active-name').textContent = selectedBen.name;
+
+  document.getElementById('select-screen').style.display = 'none';
+  document.getElementById('timer-screen').style.display = 'block';
+  document.getElementById('done-msg').style.display = 'none';
+  document.getElementById('start-btn').textContent = 'Start';
+  document.getElementById('time-status').textContent = 'Ready';
+  document.getElementById('finish-btn').style.display = 'none';
+  clearInterval(timerInterval);
+  running = false;
+  dialFg.classList.remove('running','pulsing');
+}
+
+function startCustom(){
+  if(!selectedBen) return;
+  const mins = Math.max(1, parseInt(document.getElementById('custom-mins').value) || 25);
+  mode = "countdown";
+  totalSeconds = mins * 60;
+  remaining = totalSeconds;
+
+  document.getElementById('active-tag').textContent = mins + ' min, your own pace';
+  openTimerScreen();
+  updateDisplay();
+}
+
+function startStopwatch(){
+  if(!selectedBen) return;
+  mode = "stopwatch";
+  elapsed = 0;
+
+  document.getElementById('active-tag').textContent = "Counting freely, no limit";
+  openTimerScreen();
+  dialFg.style.strokeDashoffset = 0;
+  updateStopwatchDisplay();
+}
+
+function backToSelect(){
+  clearInterval(timerInterval);
+  running = false;
+  document.getElementById('select-screen').style.display = 'block';
+  document.getElementById('timer-screen').style.display = 'none';
+}
+
+function updateDisplay(){
+  const mm = String(Math.floor(remaining / 60)).padStart(2,'0');
+  const ss = String(remaining % 60).padStart(2,'0');
+  document.getElementById('time-display').textContent = `${mm}:${ss}`;
+  const progress = 1 - (remaining / totalSeconds);
+  dialFg.style.strokeDashoffset = CIRC * (1 - progress);
+}
+
+function updateStopwatchDisplay(){
+  const h = Math.floor(elapsed / 3600);
+  const mm = String(Math.floor((elapsed % 3600) / 60)).padStart(2,'0');
+  const ss = String(elapsed % 60).padStart(2,'0');
+  document.getElementById('time-display').textContent = h > 0 ? `${h}:${mm}:${ss}` : `${mm}:${ss}`;
+}
+
+function toggleTimer(){
+  const btn = document.getElementById('start-btn');
+  const status = document.getElementById('time-status');
+  const finishBtn = document.getElementById('finish-btn');
+
+  if(mode === "countdown" && remaining <= 0) return;
+
+  running = !running;
+  if(running){
+    btn.textContent = 'Pause';
+    status.textContent = 'In progress...';
+    dialFg.classList.add('running');
+    if(mode === "stopwatch"){ dialFg.classList.add('pulsing'); finishBtn.style.display = 'inline-block'; }
+
+    timerInterval = setInterval(()=>{
+      if(mode === "countdown"){
+        remaining--;
+        updateDisplay();
+        if(remaining <= 0){
+          clearInterval(timerInterval);
+          running = false;
+          btn.textContent = 'Start';
+          status.textContent = 'Session complete';
+          dialFg.classList.remove('running');
+          document.getElementById('done-msg').style.display = 'block';
+          logSession(Math.round(totalSeconds/60));
+        }
+      } else {
+        elapsed++;
+        updateStopwatchDisplay();
+      }
+    }, 1000);
+  } else {
+    btn.textContent = 'Resume';
+    status.textContent = 'Paused';
+    dialFg.classList.remove('running','pulsing');
+    clearInterval(timerInterval);
+  }
+}
+
+function finishSession(){
+  clearInterval(timerInterval);
+  running = false;
+  dialFg.classList.remove('running','pulsing');
+  document.getElementById('time-status').textContent = 'Session complete';
+  document.getElementById('done-msg').style.display = 'block';
+  document.getElementById('finish-btn').style.display = 'none';
+  logSession(Math.round(elapsed/60));
+}
+
+function logSession(mins){
+  sessionsToday++;
+  minutesToday += mins;
+  document.getElementById('stat-sessions').textContent = sessionsToday;
+  document.getElementById('stat-minutes').textContent = minutesToday;
+  saveStats();
+}
+
+function resetTimer(){
+  clearInterval(timerInterval);
+  running = false;
+  dialFg.classList.remove('running','pulsing');
+  document.getElementById('start-btn').textContent = 'Start';
+  document.getElementById('time-status').textContent = 'Ready';
+  document.getElementById('done-msg').style.display = 'none';
+  document.getElementById('finish-btn').style.display = 'none';
+  if(mode === "countdown"){
+    remaining = totalSeconds;
+    updateDisplay();
+  } else {
+    elapsed = 0;
+    updateStopwatchDisplay();
+  }
+}
+</script>
+</body>
+</html>
